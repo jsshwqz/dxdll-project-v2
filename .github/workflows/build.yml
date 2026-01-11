@@ -25,6 +25,7 @@ jobs:
         
     - name: Build
       working-directory: dxdll-source
+      shell: cmd
       run: msbuild DX8Hook.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:LibraryPath=".;$(LibraryPath)" -verbosity:normal
 
     - name: List Release Directory
