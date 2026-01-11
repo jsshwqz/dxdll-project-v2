@@ -12,27 +12,19 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Download Dependencies (d3d8.lib, d3dx8.lib)
-      shell: powershell
+      shell: cmd
       run: |
-        $libs = @("d3d8.lib", "d3dx8.lib")
-        $baseUrl = "https://github.com/apitrace/dxsdk/raw/master/Lib/x86/"
-        
-        Write-Host "Downloading dependencies to dxdll-source..."
-        foreach ($lib in $libs) {
-            $outFile = Join-Path "dxdll-source" $lib
-            Write-Host "Downloading $lib to $outFile..."
-            Invoke-WebRequest -Uri "$baseUrl$lib" -OutFile $outFile
-        }
+        curl -L -o dxdll-source/d3d8.lib https://github.com/apitrace/dxsdk/raw/master/Lib/x86/d3d8.lib
+        curl -L -o dxdll-source/d3dx8.lib https://github.com/apitrace/dxsdk/raw/master/Lib/x86/d3dx8.lib
         
     - name: Build
       working-directory: dxdll-source
-      # Add current directory to LibraryPath so linker finds the downloaded .lib files
       run: msbuild DX8Hook.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:LibraryPath=".;$(LibraryPath)" -verbosity:normal
 
     - name: List Release Directory
