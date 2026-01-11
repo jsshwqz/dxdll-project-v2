@@ -1,0 +1,28 @@
+# Visual Studio temporary files
+.vs/
+Debug/
+Release/
+ipch/
+*.aps
+*.bak
+*.cache
+*.db
+*.err
+*.exp
+*.idb
+*.ilk
+*.iobj
+*.ipdb
+*.lib
+*.log
+*.ncb
+*.obj
+*.pch
+*.pdb
+*.sdf
+*.suo
+*.tlog
+*.user
+
+# GitHub Actions downloaded libs
+dxdll-source/*.lib
