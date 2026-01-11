@@ -2,9 +2,6 @@ name: Build DXDLL
 
 on:
   push:
-    branches: [ "**" ]
-  pull_request:
-    branches: [ "**" ]
   workflow_dispatch:
 
 jobs:
@@ -12,30 +9,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - name: Add MSBuild to PATH
+    - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Download Dependencies (d3d8.lib, d3dx8.lib, headers)
-      shell: cmd
+    - name: Build DX8Hook (Release | Win32)
       run: |
-        curl -L -o dxdll-source/d3d8.lib https://github.com/apitrace/dxsdk/raw/master/Lib/x86/d3d8.lib
-        curl -L -o dxdll-source/d3dx8.lib https://github.com/apitrace/dxsdk/raw/master/Lib/x86/d3dx8.lib
-        curl -L -o dxdll-source/d3d8types.h https://github.com/apitrace/dxsdk/raw/master/Include/d3d8types.h
-        curl -L -o dxdll-source/d3d8caps.h https://github.com/apitrace/dxsdk/raw/master/Include/d3d8caps.h
-        
-    - name: Build
-      working-directory: dxdll-source
-      shell: cmd
-      run: msbuild DX8Hook.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:LibraryPath=".;$(LibraryPath)" /p:IncludePath=".;$(IncludePath)" -verbosity:normal
+        msbuild DX8Hook/DX8Hook.sln ^
+          /p:Configuration=Release ^
+          /p:Platform=Win32 ^
+          /t:Rebuild ^
+          /m
 
-    - name: List Release Directory
-      if: always()
-      run: dir dxdll-source\Release
-
-    - name: Upload Artifact
+    - name: Upload compiled DLL
       uses: actions/upload-artifact@v4
       with:
-        name: dxdll-release
-        path: dxdll-source/Release/d3d8.dll
+        name: d3d8-dll
+        path: DX8Hook/Release/d3d8.dll
+    - name: Verify output
+      run: |
+        if not exist DX8Hook\Release\d3d8.dll exit 1
