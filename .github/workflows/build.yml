@@ -1,33 +1,6 @@
-name: Build DXDLL
-
-on:
-  push:
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: windows-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Build DX8Hook (Release | Win32)
-      run: |
-        msbuild DX8Hook/DX8Hook.sln ^
-          /p:Configuration=Release ^
-          /p:Platform=Win32 ^
-          /t:Rebuild ^
-          /m
-
-    - name: Upload compiled DLL
-      uses: actions/upload-artifact@v4
-      with:
-        name: d3d8-dll
-        path: DX8Hook/Release/d3d8.dll
-    - name: Verify output
-      run: |
-        if not exist DX8Hook\Release\d3d8.dll exit 1
+- name: Build DX8Hook (Release | Win32)
+  shell: cmd
+  run: >
+    msbuild DX8Hook\DX8Hook.sln
+    /p:Configuration=Release
+    /p:Platform=Win32
