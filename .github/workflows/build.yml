@@ -1,6 +1,0 @@
-- name: Build DX8Hook (Release | Win32)
-  shell: cmd
-  run: >
-    msbuild DX8Hook\DX8Hook.sln
-    /p:Configuration=Release
-    /p:Platform=Win32
